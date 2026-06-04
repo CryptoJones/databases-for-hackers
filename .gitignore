@@ -1,0 +1,7 @@
+# Copyrighted source material — do not publish
+source_books/
+book_quotes.json
+
+# Python
+__pycache__/
+*.pyc
