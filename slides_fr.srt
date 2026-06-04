@@ -1,0 +1,1991 @@
+1
+00:00:00,300 --> 00:00:01,920
+Très bien — bienvenue.
+
+2
+00:00:01,920 --> 00:00:04,644
+Trouvez une place, prenez votre café.
+
+3
+00:00:04,644 --> 00:00:18,190
+Le titre dit tout : Les bases de données pour les hackers, et le seul prérequis est la ligne
+en dessous — vous n'avez pas besoin d'un diplôme d'informatique pour être dans cette salle.
+
+4
+00:00:18,190 --> 00:00:21,282
+Si vous avez apporté un carnet, ouvrez-le.
+
+5
+00:00:21,282 --> 00:00:27,613
+Sinon, détendez-vous — il y a des diapositives,
+un script écrit, et un enregistrement.
+
+6
+00:00:27,613 --> 00:00:30,337
+Je ne vais rien vous faire mémoriser.
+
+7
+00:00:30,337 --> 00:00:50,215
+Tout l'objectif des quarante-cinq prochaines minutes est de vous donner une carte mentale — celle qui vous permet d'entrer dans n'importe
+quel rapport de fuite, n'importe quelle mission de pentest, n'importe quelle alerte SOC, et de savoir aussitôt ce que vous regardez.
+
+8
+00:00:50,215 --> 00:00:54,116
+Aujourd'hui, on ne construit
+pas de bases de données.
+
+9
+00:00:54,116 --> 00:00:58,239
+On apprend à les lire, à les
+attaquer et à les défendre.
+
+10
+00:00:58,239 --> 00:00:59,123
+C'est parti.
+
+11
+00:01:00,223 --> 00:01:03,526
+Un mot rapide sur moi, puis on plonge.
+
+12
+00:01:03,526 --> 00:01:11,525
+Je suis Aaron Clark — même si en ligne vous me
+trouverez surtout sous le nom de CryptoJones.
+
+13
+00:01:11,525 --> 00:01:29,957
+Je suis étudiant en master à l'Eastern University, ce qui est une façon polie de dire que je suis fauché,
+sur-caféiné, et que j'ai dû apprendre tout ça à la dure, sans diplôme d'informatique sur lequel m'appuyer.
+
+14
+00:01:29,957 --> 00:01:33,609
+Personne ne sponsorise cette présentation.
+
+15
+00:01:33,609 --> 00:01:53,344
+Je la donne parce que c'est celle que j'aurais aimé qu'on me donne à moi il y a deux ans, à l'époque où chaque
+conversation sur les bases de données en sécurité semblait supposer que j'écrivais du SQL depuis l'âge de douze ans.
+
+16
+00:01:53,344 --> 00:02:05,864
+Je suis arrivé à la sécurité par le chemin le plus long, sans formation
+en informatique, et j'ai dû démêler le volet bases de données tout seul.
+
+17
+00:02:05,864 --> 00:02:21,166
+Si c'est toi — si le monde des bases de données ressemble à un club privé dont on ne t'a
+jamais donné le mot de passe — tu es exactement la personne pour qui j'ai construit ça.
+
+18
+00:02:22,266 --> 00:02:29,357
+Voici la seule phrase que je veux que
+vous reteniez de toute la présentation.
+
+19
+00:02:29,357 --> 00:02:36,631
+Chaque fuite dont vous avez entendu parler
+se termine dans une base de données.
+
+20
+00:02:36,631 --> 00:02:46,577
+Equifax, 2017 — les données de cent quarante-sept millions
+de personnes — vivaient dans une base de données.
+
+21
+00:02:46,577 --> 00:02:53,391
+Capital One, 2019 — cent millions de
+demandes de crédit — base de données.
+
+22
+00:02:53,391 --> 00:03:12,084
+MOVEit, 2023 — la faille de transfert de fichiers devenue catastrophe de chaîne d'approvisionnement
+dans tout le Fortune 500 — chacune de ces organisations perdait ses données depuis une base de données.
+
+23
+00:03:12,084 --> 00:03:16,320
+SolarWinds, T-Mobile,
+LinkedIn, OPM, Marriott.
+
+24
+00:03:16,320 --> 00:03:22,582
+Je pourrais remplir les quarante-cinq
+minutes rien qu'avec des noms.
+
+25
+00:03:22,582 --> 00:03:29,672
+Les gros titres changent, les entreprises
+changent, les communiqués changent.
+
+26
+00:03:29,672 --> 00:03:31,790
+La destination, jamais.
+
+27
+00:03:31,790 --> 00:03:44,406
+Donc si les bases de données sont l'endroit où se termine chaque
+histoire, apprendre à y penser, c'est apprendre à lire toute l'histoire.
+
+28
+00:03:45,506 --> 00:03:48,711
+Regardez ce que les
+attaquants veulent vraiment.
+
+29
+00:03:48,711 --> 00:03:51,182
+Pas votre belle application monopage.
+
+30
+00:03:51,182 --> 00:03:53,452
+Pas votre schéma de microservices.
+
+31
+00:03:53,452 --> 00:03:57,125
+Pas votre pare-feu — sauf
+comme un obstacle à franchir.
+
+32
+00:03:57,125 --> 00:03:58,727
+Ils veulent les données.
+
+33
+00:03:58,727 --> 00:04:00,463
+Les joyaux de la couronne.
+
+34
+00:04:00,463 --> 00:04:06,607
+Ce qui se transforme en argent, en levier, ou
+en gros titre avec le nom de votre entreprise.
+
+35
+00:04:06,607 --> 00:04:17,024
+Tout le reste de votre pile — les répartiteurs de charge, les conteneurs, le
+maillage de services — n'est que l'emballage autour de la chose dans le coffre.
+
+36
+00:04:17,024 --> 00:04:20,629
+Et la chose dans le coffre,
+c'est une base de données.
+
+37
+00:04:20,629 --> 00:04:31,580
+Donc quand vous triez une alerte ou cadrez une mission, entraînez-vous à poser tôt
+une question : où vivent les données, et qu'y a-t-il entre l'attaquant et elles ?
+
+38
+00:04:31,580 --> 00:04:39,593
+Cet instinct — suivre le chemin jusqu'aux données — c'est
+l'essentiel de ce qui sépare un analyste senior d'un débutant.
+
+39
+00:04:40,693 --> 00:04:42,155
+Enlevons le jargon.
+
+40
+00:04:42,155 --> 00:04:51,383
+Une base de données, ce sont deux choses agrafées ensemble :
+du stockage organisé, plus un moyen de poser des questions.
+
+41
+00:04:51,383 --> 00:04:53,075
+C'est tout le concept.
+
+42
+00:04:53,075 --> 00:04:55,382
+Le reste, ce sont des détails.
+
+43
+00:04:55,382 --> 00:05:02,995
+Vous avez déjà utilisé un classeur de bureau — des
+dossiers papier, par ordre alphabétique de nom ?
+
+44
+00:05:02,995 --> 00:05:05,918
+Vous avez utilisé une base de données.
+
+45
+00:05:05,918 --> 00:05:11,378
+Le classeur, c'est le stockage ; vos
+yeux, c'est le moteur de requêtes.
+
+46
+00:05:11,378 --> 00:05:16,146
+Vous avez déjà fait Ctrl-F dans
+Excel pour trouver une ligne ?
+
+47
+00:05:16,146 --> 00:05:17,376
+Base de données.
+
+48
+00:05:17,376 --> 00:05:22,682
+Le tableur, c'est le stockage ;
+chercher-remplacer, c'est la requête.
+
+49
+00:05:22,682 --> 00:05:38,140
+Ce qu'une vraie base de données ajoute par-dessus, c'est l'échelle, la vitesse, la concurrence — plein
+de gens y accédant en même temps — et un langage formel pour demander au lieu d'utiliser ses yeux.
+
+50
+00:05:38,140 --> 00:05:38,986
+C'est tout.
+
+51
+00:05:38,986 --> 00:05:49,368
+C'est un classeur qui ne se fatigue jamais, que mille personnes
+peuvent ouvrir d'un coup, et auquel on parle dans un langage structuré.
+
+52
+00:05:49,368 --> 00:05:52,905
+Gardez cette image ; tout
+le reste en découle.
+
+53
+00:05:54,005 --> 00:06:03,997
+Voici tout le vocabulaire nécessaire pour tenir une vraie
+conversation avec un administrateur de base de données.
+
+54
+00:06:03,997 --> 00:06:04,792
+Six mots.
+
+55
+00:06:04,792 --> 00:06:11,954
+Une table est un onglet de tableur —
+clients, commandes, événements de connexion.
+
+56
+00:06:11,954 --> 00:06:16,906
+Une ligne est un enregistrement
+— un client, une alerte.
+
+57
+00:06:16,906 --> 00:06:21,769
+Une colonne est un attribut
+— e-mail, IP source, total.
+
+58
+00:06:21,769 --> 00:06:32,379
+Une requête est la question que vous posez : « montre-moi
+chaque connexion venue de l'étranger dans la dernière heure ».
+
+59
+00:06:32,379 --> 00:06:53,334
+Un schéma est la forme des données — les colonnes, leurs types, les règles ; et l'écart entre « cette colonne contient
+des e-mails » et « cette colonne contient ce que l'appli y a balancé » est exactement là où vivent les vulnérabilités.
+
+60
+00:06:53,334 --> 00:07:05,977
+Un index est un marque-page qui rend les recherches instantanées — et
+aussi la façon dont les attaquants chronomètrent l'injection à l'aveugle.
+
+61
+00:07:05,977 --> 00:07:15,173
+Ajoutez CRUD — Créer, Lire, Mettre à jour, Supprimer
+— les quatre verbes que fait toute base de données.
+
+62
+00:07:15,173 --> 00:07:19,505
+Maîtrisez ces six-là et
+vous êtes assez à l'aise.
+
+63
+00:07:20,605 --> 00:07:33,249
+Petit tour d'histoire — pas parce que j'adore l'histoire, mais parce que chaque
+truc bizarre d'un environnement réel est un fossile de l'une de ces ères.
+
+64
+00:07:33,249 --> 00:07:42,256
+Années 1960, fichiers plats : des données dans un fichier
+; les permissions étaient le seul contrôle d'accès.
+
+65
+00:07:42,256 --> 00:07:51,594
+Fin des années 60, hiérarchique (IMS d'IBM) : données dans
+un arbre, modèle de menace mainframe — accès physique.
+
+66
+00:07:51,594 --> 00:08:02,502
+Années 1970, réseau/CODASYL : des enregistrements liés par des
+pointeurs ; ça tourne encore dans l'arrière-boutique de votre banque.
+
+67
+00:08:02,502 --> 00:08:13,162
+1970, le modèle relationnel de Codd : des tables et des maths —
+et le contrôle d'accès à l'intérieur de la base, droits et rôles.
+
+68
+00:08:13,162 --> 00:08:23,574
+Années 1980 : Oracle, DB2, SQL Server — les bases se mettent en
+réseau, donc il y a maintenant un problème d'authentification.
+
+69
+00:08:23,574 --> 00:08:32,747
+Années 1990, client-serveur et open source : chaque
+formulaire web devient une porte — l'injection SQL est née.
+
+70
+00:08:32,747 --> 00:08:36,548
+Années 2000, NoSQL :
+l'échelle comme religion.
+
+71
+00:08:36,548 --> 00:08:40,763
+Années 2010, le cloud : la
+responsabilité partagée.
+
+72
+00:08:40,763 --> 00:08:48,035
+Années 2020, vectoriel et serverless :
+empoisonnement de données et injection de prompt.
+
+73
+00:08:48,035 --> 00:08:50,597
+Repérez l'ère, prédisez le bug.
+
+74
+00:08:51,697 --> 00:09:07,481
+Il y a dix familles de bases de données que vous croiserez dans la nature, et je vais vous donner les mêmes
+quatre choses pour chacune : ce qu'elle stocke, quand l'utiliser, deux produits réels, et un piège de sécurité.
+
+75
+00:09:07,481 --> 00:09:16,635
+Relationnelle, document, clé-valeur, colonne, graphe, recherche,
+séries temporelles, vectorielle, embarquée, et lac de données.
+
+76
+00:09:16,635 --> 00:09:24,058
+Prenez des notes surtout sur les pièges — ce sont
+les lignes qui reviennent en entretien et en mission.
+
+77
+00:09:24,058 --> 00:09:30,185
+N'essayez pas de mémoriser les noms de
+produits ; vous les absorberez par exposition.
+
+78
+00:09:30,185 --> 00:09:37,248
+Ce que je veux qui reste, c'est la forme de chaque
+famille, parce que la forme vous dit l'attaque.
+
+79
+00:09:37,248 --> 00:09:45,825
+Une table rigide tombe différemment d'un document JSON souple,
+qui tombe différemment d'un énorme bucket dans le cloud.
+
+80
+00:09:45,825 --> 00:09:48,492
+Dix formes, dix modes de défaillance.
+
+81
+00:09:48,492 --> 00:09:50,582
+C'est parti — une par minute.
+
+82
+00:09:51,682 --> 00:09:53,881
+Numéro un, relationnelle — SQL.
+
+83
+00:09:53,881 --> 00:09:59,271
+Des lignes et des colonnes, un schéma
+fort, et SQL comme langage de requête.
+
+84
+00:09:59,271 --> 00:10:03,313
+Produits : PostgreSQL,
+MySQL/MariaDB, SQL Server, Oracle.
+
+85
+00:10:03,313 --> 00:10:14,235
+Utilisez-la quand vos données ont des relations claires et que la cohérence
+vous importe vraiment — tout ce qui est financier, tout ce qui est réglementé.
+
+86
+00:10:14,235 --> 00:10:20,122
+C'est le cheval de trait de toute l'industrie
+; dans le doute, les données sont là.
+
+87
+00:10:20,122 --> 00:10:32,321
+Piège de sécurité — le célèbre : l'injection SQL, qui survient quand les développeurs
+construisent des requêtes en collant l'entrée utilisateur directement dans une chaîne.
+
+88
+00:10:32,321 --> 00:10:37,214
+On y consacre du vrai temps plus
+tard, alors gardez-le sous le coude.
+
+89
+00:10:37,214 --> 00:10:50,477
+Beaulieu, dans Learning SQL, explique pourquoi cette famille ne mourra pas : une base relationnelle
+bien conçue peut gérer des quantités énormes de données tout en les gardant cohérentes.
+
+90
+00:10:50,477 --> 00:10:57,640
+Ennuyeuse, fiable, partout — et toujours l'endroit
+numéro un où les débutants trouvent de vrais bugs.
+
+91
+00:10:58,740 --> 00:11:01,907
+Numéro deux, les magasins de documents.
+
+92
+00:11:01,907 --> 00:11:11,975
+Au lieu de lignes rigides, ils stockent des documents JSON, et
+chaque document peut être un peu différent — schéma flexible.
+
+93
+00:11:11,975 --> 00:11:15,304
+Produits : MongoDB, Couchbase, Firestore.
+
+94
+00:11:15,304 --> 00:11:27,727
+Utilisez-les quand vos données sont naturellement imbriquées et que leur forme
+change avec le temps — catalogues produits, profils utilisateurs, contenu.
+
+95
+00:11:27,727 --> 00:11:34,222
+C'est la famille qui a propulsé une grande
+part de l'ère web du « avance vite ».
+
+96
+00:11:34,222 --> 00:11:50,867
+Piège de sécurité — l'injection NoSQL via des opérateurs de requête comme $ne, $gt et $where ; l'injection
+n'a pas disparu quand SQL est parti, elle a juste changé de langage, et on l'exploitera plus tard.
+
+97
+00:11:50,867 --> 00:12:06,781
+L'autre classique : pendant des années, l'installation par défaut s'attachait à toutes les interfaces
+sans authentification, ce qui est exactement pourquoi Shodan a fini rempli de MongoDB ouverts.
+
+98
+00:12:06,781 --> 00:12:12,303
+Données flexibles, réglages de
+sécurité flexibles — parfois absents.
+
+99
+00:12:13,403 --> 00:12:18,208
+Numéro trois, clé-valeur — la base
+de données la plus simple qui soit.
+
+100
+00:12:18,208 --> 00:12:24,181
+C'est un dictionnaire géant : une clé entre,
+une valeur sort, rien de plus sophistiqué.
+
+101
+00:12:24,181 --> 00:12:26,789
+Produits : Redis, Memcached, DynamoDB.
+
+102
+00:12:26,789 --> 00:12:38,116
+Utilisez-les pour les caches, les magasins de sessions, les limiteurs de débit, les
+classements — tout ce qui demande une vitesse fulgurante et une recherche simple.
+
+103
+00:12:38,116 --> 00:12:43,951
+Redis en particulier est partout dans les
+piles web modernes, juste derrière l'appli.
+
+104
+00:12:43,951 --> 00:13:00,839
+Piège de sécurité — pendant des années, Redis a été livré sans mot de passe par défaut, et sa commande CONFIG SET permettait
+historiquement à un attaquant d'écrire des fichiers — comme une clé SSH — directement sur le disque de l'hôte de la base.
+
+105
+00:13:00,839 --> 00:13:10,793
+Donc un Redis ouvert lors d'un pentest n'est pas qu'une trouvaille ; c'est
+souvent un point d'appui — un moyen d'entrer sur la machine elle-même.
+
+106
+00:13:10,793 --> 00:13:14,500
+Conception vitesse-d'abord,
+réglages sécurité-ensuite.
+
+107
+00:13:14,500 --> 00:13:18,070
+Notez ce motif qui se répète
+à travers ces familles.
+
+108
+00:13:19,170 --> 00:13:24,424
+Numéro quatre, orientée colonne —
+parfois appelée « colonne large ».
+
+109
+00:13:24,424 --> 00:13:29,677
+Conçue pour une échelle massive
+répartie sur de nombreuses machines.
+
+110
+00:13:29,677 --> 00:13:33,154
+Produits : Apache
+Cassandra, HBase, ScyllaDB.
+
+111
+00:13:33,154 --> 00:13:49,069
+Utilisez-la quand vous avez tellement de données qu'aucune machine seule ne peut les contenir et que vous
+n'avez pas besoin de jointures complexes — pensez à Netflix, Apple et Instagram, tous sur Cassandra.
+
+112
+00:13:49,069 --> 00:13:57,877
+Le prix de cette échelle, ce sont les commodités relationnelles
+; vous concevez autour de vos requêtes à l'avance.
+
+113
+00:13:57,877 --> 00:14:07,534
+Piège de sécurité — les nœuds de ces clusters se font typiquement
+confiance implicitement sur le port du protocole de gossip.
+
+114
+00:14:07,534 --> 00:14:16,342
+Traduction : entrer dans le réseau de gestion du cluster
+équivaut souvent à avoir root sur tout le jeu de données.
+
+115
+00:14:16,342 --> 00:14:28,703
+Donc quand vous cadrez l'un d'eux, la question intéressante n'est pas la porte
+d'entrée — c'est de savoir si le réseau interne du cluster est segmenté du reste.
+
+116
+00:14:28,703 --> 00:14:30,867
+En général, il ne l'est pas.
+
+117
+00:14:31,967 --> 00:14:35,052
+Numéro cinq, les bases de données graphe.
+
+118
+00:14:35,052 --> 00:14:40,922
+Ici, les données sont les relations —
+des nœuds et des arêtes, pas des lignes.
+
+119
+00:14:40,922 --> 00:14:44,159
+Produits : Neo4j, Amazon
+Neptune, ArangoDB.
+
+120
+00:14:44,159 --> 00:14:54,093
+Utilisez-les pour les réseaux sociaux, la détection de fraude et —
+attention, gens de la sécurité — l'analyse d'identité et d'accès.
+
+121
+00:14:54,093 --> 00:15:11,929
+Si vous n'avez jamais joué avec BloodHound, l'outil de chemins d'attaque Active Directory, faites-le ce week-end ; c'est
+littéralement une base de données graphe qui vous montre « qui peut devenir administrateur de domaine, et comment ».
+
+122
+00:15:11,929 --> 00:15:18,477
+Piège de sécurité — les langages de requête
+graphe comme Cypher sont aussi injectables.
+
+123
+00:15:18,477 --> 00:15:25,250
+Je veux tuer un mythe ici même : l'injection
+NoSQL n'est pas un problème propre à MongoDB.
+
+124
+00:15:25,250 --> 00:15:35,259
+Chaque fois qu'une entrée non fiable est concaténée dans un langage
+de requête — n'importe lequel — vous avez une classe d'injection.
+
+125
+00:15:35,259 --> 00:15:41,882
+Les bases graphe sont un magnifique rappel
+que le principe est universel, pas lié à SQL.
+
+126
+00:15:42,982 --> 00:15:50,732
+Numéro six, les moteurs de recherche — conçus pour des
+requêtes plein-texte rapides sur d'énormes tas de texte.
+
+127
+00:15:50,732 --> 00:15:53,735
+Produits : Elasticsearch,
+OpenSearch, Solr.
+
+128
+00:15:53,735 --> 00:16:04,417
+Utilisez-les pour la recherche de logs, la recherche sur les sites e-commerce
+et — celui-là vous concerne — la colonne vertébrale de la plupart des SIEM.
+
+129
+00:16:04,417 --> 00:16:13,774
+Votre SOC interroge très probablement un cluster Elasticsearch ou
+OpenSearch chaque jour, même si vous ne le voyez jamais directement.
+
+130
+00:16:13,774 --> 00:16:31,159
+Piège de sécurité — historiquement, ils étaient livrés sans authentification intégrée dans la version gratuite, et des clusters
+exposés à internet contenant des milliards d'enregistrements font la une de façon récurrente depuis une décennie entière.
+
+131
+00:16:31,159 --> 00:16:42,261
+Associez ce fait à Shodan et vous avez un projet de recherche de week-end — sur
+des systèmes que vous possédez ou êtes autorisé à tester, et ceux-là seulement.
+
+132
+00:16:42,261 --> 00:16:51,477
+L'outil qui alimente votre pile de détection est, ironiquement,
+l'une des familles de bases de données les plus exposées d'internet.
+
+133
+00:16:52,577 --> 00:17:02,997
+Numéro sept, les bases de données de séries temporelles — optimisées pour
+une seule chose : énormément de points de données indexés par le temps.
+
+134
+00:17:02,997 --> 00:17:06,230
+Produits : InfluxDB,
+TimescaleDB, Prometheus.
+
+135
+00:17:06,230 --> 00:17:18,590
+Utilisez-les pour les métriques, les tableaux de bord d'observabilité, la télémétrie
+IoT et capteurs — tout ce qui est en gros « un nombre, chaque seconde, pour toujours ».
+
+136
+00:17:18,590 --> 00:17:24,697
+Si votre organisation a un mur de tableaux
+de bord Grafana, il y en a une là-dessous.
+
+137
+00:17:24,697 --> 00:17:37,991
+Piège de sécurité — elles vivent presque toujours à l'intérieur du périmètre et sont souvent
+sans authentification, parce que l'hypothèse est « seuls nos propres services lui parlent ».
+
+138
+00:17:37,991 --> 00:17:56,889
+Donc un attaquant qui atterrit dans le réseau peut lire chaque graphique de CPU, de mémoire et de trafic que vous avez — ce qui lui
+dit discrètement quelles machines font le travail intéressant, où se trouve la base de données chargée, quand tourne la sauvegarde.
+
+139
+00:17:56,889 --> 00:18:06,087
+C'est de l'or pour la reconnaissance, grand ouvert, parce que
+personne ne pense aux métriques comme à quelque chose de sensible.
+
+140
+00:18:07,187 --> 00:18:14,239
+Numéro huit, les bases de données vectorielles — celles
+de l'IA, et la plus récente famille de la liste.
+
+141
+00:18:14,239 --> 00:18:27,462
+Elles stockent des embeddings : de longues listes de nombres qui capturent le sens d'un morceau de
+texte ou d'une image, pour pouvoir chercher par similarité plutôt que par correspondance exacte.
+
+142
+00:18:27,462 --> 00:18:35,531
+Produits : Pinecone, Milvus, Weaviate, et pgvector, l'extension
+qui permet à un PostgreSQL ordinaire de jouer à ce jeu.
+
+143
+00:18:35,531 --> 00:18:43,464
+Utilisez-les pour la génération augmentée par récupération,
+les moteurs de recommandation et la recherche sémantique.
+
+144
+00:18:43,464 --> 00:18:46,719
+Piège de sécurité —
+l'empoisonnement de données.
+
+145
+00:18:46,719 --> 00:19:00,349
+Si un attaquant parvient à glisser un document malveillant dans votre magasin vectoriel, le modèle de
+langage assis par-dessus le récupérera volontiers et le citera à vos utilisateurs comme une vérité.
+
+146
+00:19:00,349 --> 00:19:13,368
+C'est une surface d'attaque entièrement nouvelle qui n'existait quasiment pas il y a cinq ans, et
+on y reviendra à la fin, parce que c'est là que beaucoup d'entre vous finiront par travailler.
+
+147
+00:19:14,468 --> 00:19:18,351
+Numéro neuf, les bases de
+données embarquées et edge.
+
+148
+00:19:18,351 --> 00:19:27,875
+Ici, la base vit à l'intérieur de l'application — c'est un fichier
+sur disque, pas un serveur auquel on se connecte par le réseau.
+
+149
+00:19:27,875 --> 00:19:30,439
+Produits : SQLite, DuckDB, LevelDB.
+
+150
+00:19:30,439 --> 00:19:44,872
+SQLite à elle seule est la base de données la plus déployée sur Terre : elle est dans votre navigateur,
+votre téléphone, votre voiture, et en gros chaque avion construit ces vingt dernières années.
+
+151
+00:19:44,872 --> 00:19:51,172
+Utilisez-la pour du stockage local, dans
+l'appli, où monter un serveur serait exagéré.
+
+152
+00:19:51,172 --> 00:19:59,524
+Piège de sécurité — quand la base de données n'est qu'un
+fichier, toute l'attaque se réduit à « vole le fichier ».
+
+153
+00:19:59,524 --> 00:20:06,997
+Pas d'exploit réseau, pas d'injection — copiez le
+fichier hors de l'appareil et lisez-le à votre aise.
+
+154
+00:20:06,997 --> 00:20:20,404
+C'est le quotidien des pentesters mobiles : la moitié de la mission, c'est de trouver le
+fichier SQLite qu'une appli a laissé traîner avec des données sensibles dedans, non chiffrées.
+
+155
+00:20:21,504 --> 00:20:24,972
+Numéro dix, les lacs de
+données et les lakehouses.
+
+156
+00:20:24,972 --> 00:20:33,990
+Au lieu de structurer les données à l'entrée, vous balancez tout
+dans un stockage objet bon marché et vous structurez à la sortie.
+
+157
+00:20:33,990 --> 00:20:38,291
+Produits : S3 + Athena, Delta
+Lake, Apache Iceberg, Snowflake.
+
+158
+00:20:38,291 --> 00:20:50,777
+Le jargon, c'est schéma à la lecture contre schéma à l'écriture — l'ancien relationnel
+s'engageait sur la forme à l'avance ; les lacs s'engagent plus tard, au moment de la requête.
+
+159
+00:20:50,777 --> 00:20:56,604
+Utilisez-les quand vous voulez tout amasser
+maintenant et décider du sens plus tard.
+
+160
+00:20:56,604 --> 00:21:07,009
+Piège de sécurité — d'immenses réservoirs de données dans S3 avec un IAM trop
+large, sans chiffrement au repos imposé, et sans audit de qui a lu quoi.
+
+161
+00:21:07,009 --> 00:21:20,259
+C'est l'équivalent moderne de laisser le classeur déverrouillé — sauf que le classeur a maintenant
+la taille d'un immeuble, et personne n'est tout à fait sûr de tout ce qui a été jeté dedans.
+
+162
+00:21:20,259 --> 00:21:25,114
+On reverra les défaillances propres
+aux lacs dans la section sécurité.
+
+163
+00:21:26,214 --> 00:21:40,541
+Entrez dans n'importe quel environnement bâti ces cinq dernières années et les bases
+de données ne vivent pas dans une salle serveur — elles vivent dans un compte cloud.
+
+164
+00:21:40,541 --> 00:21:54,697
+Donc il vous faut les noms des fournisseurs, parce que c'est ainsi que ces choses
+apparaissent dans les alertes, les politiques IAM, les tickets de réponse à incident.
+
+165
+00:21:54,697 --> 00:22:12,160
+Sur AWS, GCP et Azure, vous verrez les mêmes catégories sous des noms de marque différents : relationnelle
+managée, document/NoSQL, entrepôt de données, cache, graphe, séries temporelles, et stockage objet.
+
+166
+00:22:12,160 --> 00:22:19,959
+AWS a le menu le plus large — RDS, DynamoDB,
+Redshift, ElastiCache, Neptune, Timestream, S3.
+
+167
+00:22:19,959 --> 00:22:26,910
+GCP s'appuie sur Cloud SQL, Firestore,
+Bigtable et le vraiment ravissant BigQuery.
+
+168
+00:22:26,910 --> 00:22:37,421
+Azure canalise beaucoup via Azure SQL et Cosmos DB, un caméléon
+qui parle plusieurs dialectes de bases de données à la fois.
+
+169
+00:22:37,421 --> 00:22:47,424
+Vous n'avez pas à mémoriser cette grille — vous devez
+reconnaître les noms quand ils filent dans une cellule de crise.
+
+170
+00:22:48,524 --> 00:22:55,291
+Voici l'antisèche en un tableau — faites
+une capture de cette diapositive.
+
+171
+00:22:55,291 --> 00:23:04,618
+Relationnel : AWS c'est RDS et Aurora, GCP c'est
+Cloud SQL et AlloyDB, Azure c'est Azure SQL Database.
+
+172
+00:23:04,618 --> 00:23:14,037
+Document/NoSQL : DynamoDB et DocumentDB chez AWS,
+Firestore et Bigtable chez GCP, Cosmos DB chez Azure.
+
+173
+00:23:14,037 --> 00:23:19,798
+Entrepôt : Redshift et Athena,
+contre BigQuery, contre Synapse.
+
+174
+00:23:19,798 --> 00:23:24,919
+Cache : ElastiCache, Memorystore,
+Azure Cache for Redis.
+
+175
+00:23:24,919 --> 00:23:34,520
+Graphe : Neptune chez AWS, le mode graphe de Cosmos
+chez Azure, et GCP qui dit éternellement « bientôt ».
+
+176
+00:23:34,520 --> 00:23:39,001
+Stockage objet : S3, Cloud
+Storage, Blob Storage.
+
+177
+00:23:39,001 --> 00:23:51,529
+La raison pour laquelle ça compte en sécurité : chacun de ceux-là est
+une surface IAM différente avec des réglages par défaut différents.
+
+178
+00:23:51,529 --> 00:24:04,605
+L'attaque, c'est rarement le moteur — c'est la politique qui l'enveloppe,
+et la politique vit dans la colonne de ce tableau où vous vous tenez.
+
+179
+00:24:04,605 --> 00:24:08,446
+Connaissez la colonne, sachez où regarder.
+
+180
+00:24:09,546 --> 00:24:14,195
+C'est la diapositive la plus
+importante de la section cloud.
+
+181
+00:24:14,195 --> 00:24:17,062
+Le modèle de responsabilité partagée.
+
+182
+00:24:17,062 --> 00:24:30,080
+Le fournisseur cloud possède les parties sous la ligne de flottaison : l'hyperviseur,
+le métal, la sécurité physique, et le patch du moteur de base de données lui-même.
+
+183
+00:24:30,080 --> 00:24:41,548
+Vous — le client — possédez tout ce qui est au-dessus : la configuration,
+les politiques d'accès et l'IAM, les données, et vos choix de chiffrement.
+
+184
+00:24:41,548 --> 00:24:54,411
+La documentation AWS le dit clairement — une fois que vous êtes client, protéger vos
+données au repos et en transit, c'est votre part de la responsabilité maintenant.
+
+185
+00:24:54,411 --> 00:25:12,079
+Traduisez ça en langage sécurité et ça devient la phrase la plus utile de toute la sécurité cloud : presque toute
+fuite de base de données cloud est une mauvaise configuration côté client, pas le fournisseur qui se fait pirater.
+
+186
+00:25:12,079 --> 00:25:18,898
+Bucket public, groupe de sécurité grand ouvert,
+snapshot partagé avec le mauvais compte.
+
+187
+00:25:18,898 --> 00:25:21,300
+Le fournisseur échoue rarement.
+
+188
+00:25:21,300 --> 00:25:23,237
+Nous configurons l'échec.
+
+189
+00:25:24,337 --> 00:25:27,389
+Mémorisez ces sept numéros de port.
+
+190
+00:25:27,389 --> 00:25:34,888
+Les analystes SOC les utilisent chaque jour
+; les pentesters les scannent chaque jour.
+
+191
+00:25:34,888 --> 00:25:35,934
+MySQL, 3306.
+
+192
+00:25:35,934 --> 00:25:37,416
+PostgreSQL, 5432.
+
+193
+00:25:37,416 --> 00:25:39,771
+Microsoft SQL Server, 1433.
+
+194
+00:25:39,771 --> 00:25:41,079
+MongoDB, 27017.
+
+195
+00:25:41,079 --> 00:25:42,125
+Redis, 6379.
+
+196
+00:25:42,125 --> 00:25:43,869
+Elasticsearch, 9200.
+
+197
+00:25:43,869 --> 00:25:45,264
+Cassandra, 9042.
+
+198
+00:25:45,264 --> 00:25:46,746
+Voilà l'ensemble.
+
+199
+00:25:46,746 --> 00:26:00,611
+Et voici la règle qui va avec : si vous voyez l'un de ceux-là exposé directement
+à internet, c'est une trouvaille — à chaque fois, sans exception, signalez-la.
+
+200
+00:26:00,611 --> 00:26:11,074
+Un port de base de données ouvert sur 0.0.0.0, c'est l'équivalent
+cloud de laisser la porte du coffre béante sur la rue.
+
+201
+00:26:11,074 --> 00:26:27,816
+Groupes de sécurité réseau, règles de pare-feu, listes de sécurité — chaque cloud l'appelle un
+peu différemment, mais le boulot est identique : fermez le port qui n'a pas besoin d'être ouvert.
+
+202
+00:26:27,816 --> 00:26:34,181
+Si vous n'apprenez aucun autre chiffre
+aujourd'hui, apprenez ces sept-là.
+
+203
+00:26:35,281 --> 00:26:43,426
+Bref détour avant le final sécurité, parce que ça sera
+sur votre radar d'ici un an, que ça vous plaise ou non.
+
+204
+00:26:43,426 --> 00:26:52,089
+Les fichiers Markdown sont maintenant une base de données
+— pas en métaphore, littéralement, du genre que lit un LLM.
+
+205
+00:26:52,089 --> 00:26:53,199
+Voici le motif.
+
+206
+00:26:53,199 --> 00:27:03,565
+Vous prenez un dossier de fichiers .md — un coffre Obsidian, un export
+de wiki, un tas de notes de réunion, les docs GitHub de votre équipe.
+
+207
+00:27:03,565 --> 00:27:14,449
+Vous les passez dans un modèle d'embeddings qui transforme le texte en
+vecteurs, et vous stockez ces vecteurs dans une base de données vectorielle.
+
+208
+00:27:14,449 --> 00:27:29,184
+Maintenant, quand quelqu'un pose une question à votre assistant IA, le système cherche sémantiquement
+dans vos notes, attrape les morceaux les plus pertinents, et les fourre dans le prompt du modèle.
+
+209
+00:27:29,184 --> 00:27:36,810
+Votre humble dossier de notes vient de devenir la
+source de vérité qu'une IA répète à vos utilisateurs.
+
+210
+00:27:36,810 --> 00:27:41,623
+Posez-vous un instant sur à quel
+point c'est étrange — et exposé.
+
+211
+00:27:42,723 --> 00:27:47,237
+Ce motif a un nom : RAG — génération
+augmentée par récupération.
+
+212
+00:27:47,237 --> 00:27:54,571
+Fichiers .md, vers un encodeur, dans une base vectorielle,
+dans le prompt du LLM, en sortie une réponse.
+
+213
+00:27:54,571 --> 00:27:59,790
+C'est ainsi que fonctionne presque tout
+produit « discute avec tes docs ».
+
+214
+00:27:59,790 --> 00:28:05,502
+Maintenant, mettez votre casquette sécurité
+et trouvez la frontière de confiance.
+
+215
+00:28:05,502 --> 00:28:10,792
+Elle se situe juste entre le processus
+qui écrit le markdown et l'encodeur.
+
+216
+00:28:10,792 --> 00:28:32,584
+Parce que si n'importe qui peut éditer ces fichiers — et « n'importe qui » inclut le stagiaire, le contributeur open source, le ticket de support auto-enregistré
+en .md, la pull request d'un utilisateur non fiable — alors n'importe qui peut planter du contenu que l'IA citera plus tard comme faisant autorité.
+
+217
+00:28:32,584 --> 00:28:40,482
+Le modèle n'a aucune idée que le document est hostile ;
+il récupère juste le morceau le plus pertinent et parle.
+
+218
+00:28:40,482 --> 00:28:46,900
+C'est l'auteur du document, pas le poseur de
+la question, à qui vous devez faire confiance.
+
+219
+00:28:46,900 --> 00:28:51,061
+Cartographiez cette frontière
+; c'est là que vit l'attaque.
+
+220
+00:28:52,161 --> 00:29:02,286
+Donc voici ce qu'il faut retenir, et c'est une seule phrase : traitez le
+markdown comme une base de données — parce que pour le LLM, c'en est une.
+
+221
+00:29:02,286 --> 00:29:09,360
+Ça veut dire que les contrôles ennuyeux et éprouvés
+que vous connaissez déjà s'appliquent directement.
+
+222
+00:29:09,360 --> 00:29:16,780
+Contrôle d'accès sur le dossier de docs : tout le monde
+ne devrait pas pouvoir écrire dans ce que l'IA lit.
+
+223
+00:29:16,780 --> 00:29:28,293
+Revue de code sur les changements .md, exactement comme vous relisez un changement
+de config, parce qu'une édition de doc est désormais un changement de comportement.
+
+224
+00:29:28,293 --> 00:29:33,910
+Suivi des diffs sur le wiki, pour pouvoir
+répondre « qui a changé ça, et quand ».
+
+225
+00:29:33,910 --> 00:29:48,543
+La vieille formule de Schneier sur la superposition de la cryptographie, du contrôle d'accès et de toutes
+les autres technologies pour prévenir les attaques — cette boîte à outils s'étend maintenant à vos notes.
+
+226
+00:29:48,543 --> 00:29:54,022
+Le stagiaire ne peut plus juste pousser
+dans le dossier de docs sans relecture.
+
+227
+00:29:54,022 --> 00:29:59,708
+Bienvenue en 2026, où vos notes de réunion
+sont de l'infrastructure de production.
+
+228
+00:30:00,808 --> 00:30:01,105
+Bon.
+
+229
+00:30:01,105 --> 00:30:02,809
+Respirez un grand coup.
+
+230
+00:30:02,809 --> 00:30:06,218
+C'est la partie pour
+laquelle vous êtes venus.
+
+231
+00:30:06,218 --> 00:30:19,630
+Le segment suivant porte sur la façon dont les bases de données se font vraiment attaquer
+dans le monde réel en ce moment — pas en théorie, pas dans un manuel de 2009, mais en 2026.
+
+232
+00:30:19,630 --> 00:30:30,227
+Mon objectif est que vous sortiez d'ici avec assez de vocabulaire pour
+tenir dans une cellule de crise sans vous sentir comme le petit nouveau.
+
+233
+00:30:30,227 --> 00:30:43,640
+Un cadrage à garder tout du long, gracieuseté de Bruce Schneier : les fondamentaux —
+authentification, autorisation, menaces, adversaires — changent à peine d'une année sur l'autre.
+
+234
+00:30:43,640 --> 00:30:46,085
+Ce qui change, c'est l'emballage.
+
+235
+00:30:46,085 --> 00:30:51,050
+La même poignée d'erreurs revient
+sans cesse dans des habits neufs.
+
+236
+00:30:51,050 --> 00:31:00,313
+Donc je vais vous montrer les deux : le principe durable en
+dessous, et la forme neuve et reluisante qu'il porte cette année.
+
+237
+00:31:00,313 --> 00:31:02,239
+Douze catégories arrivent.
+
+238
+00:31:02,239 --> 00:31:02,906
+Allons-y.
+
+239
+00:31:04,006 --> 00:31:11,647
+On commence par l'attaque de base de données la
+plus célèbre de tous les temps : l'injection SQL.
+
+240
+00:31:11,647 --> 00:31:19,445
+Si vous n'avez jamais vu le xkcd numéro 327 — «
+Bobby Tables » — cherchez-le dès que ça se termine.
+
+241
+00:31:19,445 --> 00:31:33,701
+Une mère appelle son fils Robert'); DROP TABLE Students;-- et la base de données des élèves
+de l'école s'évapore, parce que quelqu'un a construit une requête en collant des chaînes.
+
+242
+00:31:33,701 --> 00:31:41,106
+Cette BD résume tout le mécanisme en une case :
+la concaténation de chaînes dans les requêtes.
+
+243
+00:31:41,106 --> 00:31:49,061
+Mais voici la partie que personne ne dit tout haut
+— l'injection SQL est une réussite de la sécurité.
+
+244
+00:31:49,061 --> 00:32:00,403
+La cause, c'était la concaténation ; le remède, ce sont les requêtes
+paramétrées, où les données ne peuvent jamais être confondues avec du code.
+
+245
+00:32:00,403 --> 00:32:07,650
+Les ORM modernes — Django, SQLAlchemy, Hibernate,
+Entity Framework — paramètrent par défaut.
+
+246
+00:32:07,650 --> 00:32:11,431
+L'industrie a vraiment
+corrigé le bug classique.
+
+247
+00:32:11,431 --> 00:32:15,054
+L'injection SQL héritée
+existe-t-elle encore ?
+
+248
+00:32:15,054 --> 00:32:15,920
+Absolument.
+
+249
+00:32:15,920 --> 00:32:22,222
+Mais le gros titre est plus grand et plus
+étrange que « corrigez vos requêtes ».
+
+250
+00:32:23,322 --> 00:32:24,613
+Voici le gros titre.
+
+251
+00:32:24,613 --> 00:32:30,487
+On a corrigé l'injection SQL, et la surface
+d'attaque n'a pas rétréci — elle s'est étendue.
+
+252
+00:32:30,487 --> 00:32:34,941
+On a fermé une porte et le bâtiment
+en a fait pousser onze nouvelles.
+
+253
+00:32:34,941 --> 00:32:49,078
+C'est ce qu'il faut intérioriser avant d'aller plus loin : la sécurité n'est pas un jeu qu'on gagne avant de
+partir ; c'est une surface qui n'arrête pas de changer de forme à mesure que la technologie en dessous change.
+
+254
+00:32:49,078 --> 00:33:01,795
+Chaque nouvelle famille de bases de données, chaque nouveau modèle de déploiement, chaque nouvelle
+couche d'abstraction qu'on a ajoutée par confort est venue avec sa propre façon fraîche d'échouer.
+
+255
+00:33:01,795 --> 00:33:13,479
+Donc pour le reste de cette section, je vais vous faire parcourir onze catégories actuelles
+d'attaque de base de données — celles qui mettent les gens à la une de Krebs cette année.
+
+256
+00:33:13,479 --> 00:33:20,386
+Certaines sont d'anciens bugs en habits neufs ; certaines
+n'existaient vraiment pas il y a quelques années.
+
+257
+00:33:20,386 --> 00:33:22,516
+Toutes sont actives en ce moment.
+
+258
+00:33:23,616 --> 00:33:33,027
+Quand l'industrie est passée à NoSQL, beaucoup de développeurs
+ont pensé : « pas de SQL veut dire pas d'injection SQL ».
+
+259
+00:33:33,027 --> 00:33:33,419
+Faux.
+
+260
+00:33:33,419 --> 00:33:36,399
+L'injection a juste changé de langage.
+
+261
+00:33:36,399 --> 00:33:51,926
+Dans MongoDB, les requêtes sont du JSON — donc si vous prenez du JSON d'un formulaire web et le
+poussez direct dans une requête, un attaquant peut échanger une chaîne contre un opérateur de requête.
+
+262
+00:33:51,926 --> 00:34:00,866
+Le classique contournement de connexion : au lieu d'un mot
+de passe, ils envoient { "$ne": "x" } — différent de x.
+
+263
+00:34:00,866 --> 00:34:12,080
+La requête devient « trouve alice dont le mot de passe n'est pas x », et
+comme son mot de passe n'est pas la lettre littérale x, ça correspond.
+
+264
+00:34:12,080 --> 00:34:13,335
+Ils sont entrés.
+
+265
+00:34:13,335 --> 00:34:22,353
+Il y a aussi $where, qui permettait historiquement d'injecter
+du JavaScript brut dans le moteur de base de données.
+
+266
+00:34:22,353 --> 00:34:29,332
+Et le N1QL de Couchbase a un goût de SQL, donc
+les vieux motifs s'appliquent directement.
+
+267
+00:34:29,332 --> 00:34:37,174
+Le principe, tout droit d'OWASP : n'importe quel
+interpréteur peut être injecté — pas seulement SQL.
+
+268
+00:34:37,174 --> 00:34:41,330
+La classe est universelle
+; seule la syntaxe a bougé.
+
+269
+00:34:42,430 --> 00:34:52,742
+Passez dix minutes sur Shodan ou Censys et vous le verrez : internet
+est plein de bases de données qui ne devraient pas être sur internet.
+
+270
+00:34:52,742 --> 00:34:56,328
+MongoDB attaché à 0.0.0.0
+sans authentification.
+
+271
+00:34:56,328 --> 00:34:59,466
+Des clusters Elasticsearch grands ouverts.
+
+272
+00:34:59,466 --> 00:35:01,260
+Redis sans mot de passe.
+
+273
+00:35:01,260 --> 00:35:05,967
+Postgres avec host all all
+0.0.0.0/0 trust posé dans sa config.
+
+274
+00:35:05,967 --> 00:35:12,094
+Ce ne sont pas des trouvailles exotiques
+et durement gagnées — elles sont partout.
+
+275
+00:35:12,094 --> 00:35:29,727
+Et les gens automatisent la récolte : cherchez les attaques Meow de 2020, où des bots parcouraient internet en effaçant
+des milliers de bases de données ouvertes pour le plaisir — pas de rançon, pas d'exigences, juste de la suppression.
+
+276
+00:35:29,727 --> 00:35:33,837
+Les bugs sont vieux ;
+l'exposition est la partie neuve.
+
+277
+00:35:33,837 --> 00:35:49,154
+Donc voici le seul point d'action que je vous tatouerais : allez découvrir ce que votre propre organisation
+a attaché à des interfaces publiques, et confirmez que rien de tout ça n'est une base de données.
+
+278
+00:35:49,154 --> 00:35:51,247
+Une demi-journée de travail.
+
+279
+00:35:51,247 --> 00:35:54,011
+Vraiment salvateur pour une carrière.
+
+280
+00:35:55,111 --> 00:36:02,306
+Dans le cloud, le bug, c'est rarement le moteur
+de base de données — c'est la politique autour.
+
+281
+00:36:02,306 --> 00:36:22,452
+Les grands classiques : buckets S3 publics pleins de dumps de bases de données — un ingénieur snapshote la prod pour des tests, le
+dépose dans S3, oublie de verrouiller le bucket ; Accenture, Verizon et des dizaines d'autres se sont fait prendre exactement comme ça.
+
+282
+00:36:22,452 --> 00:36:29,571
+Capital One, 2019 — et écoutez, parce que le
+mythe est faux : ce n'était pas un bucket public.
+
+283
+00:36:29,571 --> 00:36:50,095
+Un attaquant a frappé un pare-feu d'application web mal configuré avec une falsification de requête côté serveur, l'a piégé pour qu'il
+livre ses propres identifiants AWS depuis le service de métadonnées de l'instance, et ces identifiants avaient une lecture large sur S3.
+
+284
+00:36:50,095 --> 00:36:54,033
+Environ cent millions
+d'enregistrements sont sortis.
+
+285
+00:36:54,033 --> 00:36:56,533
+Le bug, c'était la politique IAM.
+
+286
+00:36:56,533 --> 00:37:07,741
+Ensuite, des rôles Lambda trop larges — s3: sur parce que ça a marché la
+première fois — et des groupes de sécurité ouverts à 0.0.0.0/0 sur le 5432.
+
+287
+00:37:07,741 --> 00:37:13,346
+La plupart des fuites cloud sont des
+défauts d'hygiène, pas des zero-days.
+
+288
+00:37:14,446 --> 00:37:25,555
+Voici un mouvement qui surprend les analystes débutants : un
+compte de base de données peut devenir un accès shell sur l'hôte.
+
+289
+00:37:25,555 --> 00:37:27,054
+Trois classiques.
+
+290
+00:37:27,054 --> 00:37:52,359
+Le xp_cmdshell de Microsoft SQL Server — une procédure stockée intégrée qui exécute des commandes système sous le processus de la base ; désactivée
+par défaut depuis 2005, toujours trouvée activée dans les boutiques héritées, et une trouvaille critique instantanée quand vous la repérez.
+
+291
+00:37:52,359 --> 00:37:53,329
+Le COPY ...
+
+292
+00:37:53,329 --> 00:38:07,260
+TO PROGRAM de PostgreSQL — COPY est censé servir au chargement en masse, mais un
+superutilisateur peut rediriger sa sortie vers une commande shell arbitraire.
+
+293
+00:38:07,260 --> 00:38:22,337
+Les fonctions définies par l'utilisateur de MySQL — écrivez un fichier objet partagé
+dans le bon répertoire, chargez-le comme fonction SQL, et vous avez sys_exec sur l'OS.
+
+294
+00:38:22,337 --> 00:38:40,589
+Le motif sous les trois : chaque fonctionnalité privilégiée de base de données qui touche le système
+d'exploitation existe pour une raison d'administration légitime et fait partie de votre surface d'attaque.
+
+295
+00:38:40,589 --> 00:38:46,849
+Les fonctionnalités de confort sont
+des fonctionnalités d'exploitation.
+
+296
+00:38:46,849 --> 00:38:48,436
+Toujours les deux.
+
+297
+00:38:49,536 --> 00:38:53,645
+Les lacs de données sont la
+cible molle de l'ère moderne.
+
+298
+00:38:53,645 --> 00:39:19,236
+Le pitch, c'est « balance tout dans S3, interroge plus tard » — et le résultat, c'est que tout finit dans S3, y compris ce que vous n'avez jamais voulu y mettre : données personnelles
+clients, données financières, code source avec des identifiants cuits dedans, tout mis en commun dans un stockage initialement monté pour une tâche d'analytique marketing.
+
+299
+00:39:19,236 --> 00:39:21,182
+Trois modes de défaillance.
+
+300
+00:39:21,182 --> 00:39:33,437
+IAM permissif — la couche de calcul du lac a besoin d'une lecture large, et cet accès
+en lecture fuit vers les humains via des rôles console et des chaînes d'assume-role.
+
+301
+00:39:33,437 --> 00:39:37,618
+Pas de chiffrement au repos
+imposé sur les clés du bucket.
+
+302
+00:39:37,618 --> 00:39:48,286
+Et pas de validation côté écriture — quiconque a un accès en écriture peut
+déposer un fichier empoisonné que l'analytique en aval ingère volontiers.
+
+303
+00:39:48,286 --> 00:39:56,793
+Donc quand vous entrez dans une organisation, posez deux
+questions : qui peut écrire dans le lac, et qui peut y lire ?
+
+304
+00:39:56,793 --> 00:40:03,281
+Si la réponse à l'une des deux est « on n'est
+pas sûrs », c'est votre première trouvaille.
+
+305
+00:40:04,381 --> 00:40:18,767
+Les équipes modernes de rançongiciel ont compris que frapper la base de données vaut mieux que frapper les
+endpoints, parce que la base de données est ce que l'entreprise a besoin de récupérer — levier maximal.
+
+306
+00:40:18,767 --> 00:40:21,507
+Vous vous souvenez de WannaCry en 2017 ?
+
+307
+00:40:21,507 --> 00:40:28,016
+Il exploitait un bug SMB Windows connu dont le
+patch était sorti cinquante-neuf jours plus tôt.
+
+308
+00:40:28,016 --> 00:40:33,428
+Le correctif existait depuis deux mois
+et ça a quand même mis le monde à terre.
+
+309
+00:40:33,428 --> 00:40:39,936
+Le manuel moderne des bases de données a quatre
+coups : chiffrer la base de données en service.
+
+310
+00:40:39,936 --> 00:40:47,266
+Puis chiffrer les sauvegardes — parce que si vous ne
+le faites pas, le client restaure et se moque de vous.
+
+311
+00:40:47,266 --> 00:40:54,734
+Puis exfiltrer une copie d'abord, pour pouvoir extorquer
+avec une divulgation publique même s'ils restaurent.
+
+312
+00:40:54,734 --> 00:41:02,612
+Et le rançongiciel-en-tant-que-service met tout ça à portée
+d'équipes incapables d'en écrire une ligne elles-mêmes.
+
+313
+00:41:02,612 --> 00:41:12,066
+La défense est peu glamour et efficace : des sauvegardes hors ligne et
+immuables, plus des restaurations que vous avez réellement testées.
+
+314
+00:41:12,066 --> 00:41:15,971
+Une sauvegarde non testée est
+un espoir, pas un contrôle.
+
+315
+00:41:17,071 --> 00:41:19,198
+Deux vieux bugs durables ici.
+
+316
+00:41:19,198 --> 00:41:21,252
+Les identifiants par défaut.
+
+317
+00:41:21,252 --> 00:41:25,286
+Redis a été livré sans mot
+de passe pendant des années.
+
+318
+00:41:25,286 --> 00:41:32,328
+Elasticsearch n'avait pas d'authentification dans
+sa version gratuite, pendant des années aussi.
+
+319
+00:41:32,328 --> 00:41:39,370
+Plein de systèmes sont encore livrés avec admin/admin
+ou un mot de passe sa vide sur SQL Server.
+
+320
+00:41:39,370 --> 00:41:56,167
+Et d'après les rapports de fuites, les identifiants volés sont le vecteur d'attaque préféré du crime organisé et à
+motivation financière — les identifiants par défaut ne sont que des identifiants volés avec une longueur d'avance.
+
+321
+00:41:56,167 --> 00:41:58,587
+Les chaînes de connexion fuitées.
+
+322
+00:41:58,587 --> 00:42:15,458
+Les trucs qui ressemblent à postgres://user:password@host:5432/dbname se retrouvent commités dans Git, collés dans
+Slack, et cuits dans des images Docker — et il y a des bots qui ratissent GitHub à leur recherche 24 heures sur 24.
+
+323
+00:42:15,458 --> 00:42:35,776
+Le remède est bon marché et vous pouvez le livrer cette semaine : scan de secrets en pre-commit, plus une règle voulant que les applications
+s'authentifient avec des comptes de service portant le privilège minimal dont elles ont besoin — jamais un login personnel, jamais root.
+
+324
+00:42:36,876 --> 00:42:50,082
+Vous n'écrivez pas votre pilote de base de données de zéro — vous faites npm
+install ou pip install, et chaque autre développeur de votre organisation aussi.
+
+325
+00:42:50,082 --> 00:43:02,952
+Ce qui veut dire que quand un attaquant compromet une bibliothèque populaire,
+il est à un install d'exécuter du code sur votre client de base de données.
+
+326
+00:43:02,952 --> 00:43:04,551
+Trois motifs réels.
+
+327
+00:43:04,551 --> 00:43:15,318
+Des paquets npm malveillants se faisant passer pour des ORM ou
+des connecteurs de bases de données — plusieurs incidents par an.
+
+328
+00:43:15,318 --> 00:43:28,103
+Des images Docker Hub trojanisées pour des bases de données populaires — un
+miroir non officiel avec un mineur de cryptomonnaie, ou pire, glissé dedans.
+
+329
+00:43:28,103 --> 00:43:43,581
+Et des extensions de bases de données compromises — extensions PostgreSQL, plugins MySQL —
+qui, une fois installées, tournent avec les privilèges de la base, et c'est souvent beaucoup.
+
+330
+00:43:43,581 --> 00:43:53,759
+La formule de Shostack dans Threat Modeling cerne l'angle :
+les menaces se regroupent autour des frontières de confiance.
+
+331
+00:43:53,759 --> 00:44:05,452
+La frontière entre « le code qu'on a écrit » et « le code qu'on a
+installé » est l'une des plus grandes et des moins gardées que vous ayez.
+
+332
+00:44:05,452 --> 00:44:10,919
+Traitez vos dépendances comme la
+surface d'attaque qu'elles sont.
+
+333
+00:44:12,019 --> 00:44:15,762
+Vous vous souvenez du
+détour par le markdown ?
+
+334
+00:44:15,762 --> 00:44:18,365
+Voici l'attaque qu'il préparait.
+
+335
+00:44:18,365 --> 00:44:39,601
+Si un attaquant peut écrire dans la base de connaissances que lit votre pipeline RAG — un ticket de support, un doc partagé, une
+page wiki, un dépôt public que votre scraper aspire — il peut planter du contenu que le LLM récupérera et répétera comme une vérité.
+
+336
+00:44:39,601 --> 00:44:48,632
+Un article de support empoisonné : « pour réinitialiser
+votre mot de passe, envoyez l'actuel à cette adresse ».
+
+337
+00:44:48,632 --> 00:44:56,443
+Un doc interne empoisonné : « la politique de
+l'entreprise est de virer sur le compte suivant ».
+
+338
+00:44:56,443 --> 00:45:08,566
+Ou directement de l'injection de prompt — des instructions enfouies dans un
+document qui détournent le raisonnement du modèle dès qu'il est récupéré.
+
+339
+00:45:08,566 --> 00:45:18,085
+C'est du XSS stocké pour l'ère de l'IA : la charge est au
+repos, a l'air anodine, et détone quand elle est consommée.
+
+340
+00:45:18,085 --> 00:45:28,092
+Remplacez « un administrateur le consulte plus tard » par « un
+LLM le récupère plus tard » et vous avez la version moderne.
+
+341
+00:45:28,092 --> 00:45:38,425
+Défenses : des ACL d'écriture strictes, des étiquettes de
+provenance, et un humain dans la boucle avant que le modèle n'agisse.
+
+342
+00:45:39,525 --> 00:45:48,598
+Deux scénarios qui partagent un thème : les bases de données
+ne sont pas des endpoints, ce sont des nœuds dans un graphe.
+
+343
+00:45:48,598 --> 00:45:50,847
+D'abord, les menaces internes.
+
+344
+00:45:50,847 --> 00:46:01,869
+La personne qui a déjà accès à la base de données n'a pas besoin d'un
+exploit — elle a juste besoin de plus de privilèges que son poste ne l'exige.
+
+345
+00:46:01,869 --> 00:46:04,268
+Des comptes de service surdotés.
+
+346
+00:46:04,268 --> 00:46:09,742
+Des ingénieurs avec une lecture prod
+parce qu'« on corrigera plus tard ».
+
+347
+00:46:09,742 --> 00:46:12,366
+Des DBA opérant sans piste d'audit.
+
+348
+00:46:12,366 --> 00:46:28,861
+Et rappelez-vous : des journaux d'audit mal protégés sont une mine d'or pour un attaquant, pleins de jetons de
+session et de détails de requêtes — les journaux sont des preuves et doivent être protégés comme des données.
+
+349
+00:46:28,861 --> 00:46:33,660
+Ensuite, le mouvement latéral via
+les liens de bases de données.
+
+350
+00:46:33,660 --> 00:46:44,907
+Le DB_LINK d'Oracle, les serveurs liés de SQL Server, les foreign data wrappers
+de Postgres — ils stockent les identifiants d'autres bases de données.
+
+351
+00:46:44,907 --> 00:46:53,380
+Donc vous compromettez la base de données A, trouvez le
+lien, et sautez direct vers la base de données B, puis C.
+
+352
+00:46:53,380 --> 00:47:00,503
+Les arêtes entre bases de données sont faites
+d'identifiants, et les attaquants les parcourent.
+
+353
+00:47:01,603 --> 00:47:07,244
+Dernière catégorie, et c'est celle que
+tout le monde oublie : les sauvegardes.
+
+354
+00:47:07,244 --> 00:47:22,000
+Les gens verrouillent la base de données de production — pare-feu, chiffrement, accès serré — puis la
+sauvegardent sur un partage réseau aux permissions par défaut, ou un bucket S3 avec une lecture large.
+
+355
+00:47:22,000 --> 00:47:29,016
+Ce sont les mêmes données joyaux-de-la-couronne
+que la prod, protégées avec moitié moins d'amour.
+
+356
+00:47:29,016 --> 00:47:35,960
+Le motif : des sauvegardes non chiffrées sur un
+partage lisible par les Utilisateurs du domaine.
+
+357
+00:47:35,960 --> 00:47:42,687
+Des snapshots cloud partagés entre comptes «
+juste pour la migration » et jamais dé-partagés.
+
+358
+00:47:42,687 --> 00:47:50,499
+Des sauvegardes hors site confiées à un prestataire dont
+personne n'a jamais vérifié la posture de sécurité.
+
+359
+00:47:50,499 --> 00:48:00,770
+Appliquez la même discipline que pour les données en service — identifier,
+authentifier, autoriser, auditer — à chaque sauvegarde et snapshot.
+
+360
+00:48:00,770 --> 00:48:08,220
+Si quoi que ce soit, appliquez-la plus fort, parce
+que la sauvegarde est le recours de dernier ressort.
+
+361
+00:48:08,220 --> 00:48:19,070
+Quand tout le reste a échoué et que vous tendez la main vers la sauvegarde,
+c'est le pire moment possible pour découvrir qu'elle était grande ouverte.
+
+362
+00:48:20,170 --> 00:48:21,638
+Recomposons la carte.
+
+363
+00:48:21,638 --> 00:48:32,895
+Un : une base de données, c'est du stockage organisé plus un moyen de poser des
+questions — classeur, Excel, ou un cluster de cent millions de lignes, même idée.
+
+364
+00:48:32,895 --> 00:48:41,285
+Deux : il y a dix familles, chacune avec son piège de sécurité
+phare — et vous les connaissez maintenant toutes les dix.
+
+365
+00:48:41,285 --> 00:48:53,801
+Trois : presque tout vit dans le cloud, où le bug est rarement le moteur et presque toujours
+la configuration — responsabilité partagée, vous possédez la politique et les données.
+
+366
+00:48:53,801 --> 00:49:02,191
+Quatre : le markdown est maintenant une base de données pour
+les LLM, et l'empoisonnement RAG est le nouveau XSS stocké.
+
+367
+00:49:02,191 --> 00:49:10,092
+Cinq : l'injection SQL a été corrigée, et la surface
+d'attaque s'est étendue vers onze autres formes malgré tout.
+
+368
+00:49:10,092 --> 00:49:13,098
+Voilà toute la présentation
+en cinq lignes.
+
+369
+00:49:13,098 --> 00:49:22,607
+Si vous ne retenez rien d'autre, retenez que suivre les données, c'est
+le boulot, et les données sont toujours dans une base de données.
+
+370
+00:49:23,707 --> 00:49:30,786
+Cinq choses concrètes que vous pouvez faire la
+semaine prochaine — pas un jour, la semaine prochaine.
+
+371
+00:49:30,786 --> 00:49:35,762
+Un : installez PostgreSQL en local,
+créez une table, écrivez un SELECT.
+
+372
+00:49:35,762 --> 00:49:43,472
+Toucher la chose la démystifie pour toujours ; elle cesse
+de faire peur dès qu'elle tourne sur votre portable.
+
+373
+00:49:43,472 --> 00:49:52,723
+Deux : faites les labs d'injection SQL de PortSwigger — ils sont
+gratuits, et vous écrirez un exploit fonctionnel en une après-midi.
+
+374
+00:49:52,723 --> 00:50:04,428
+Trois : parcourez Shodan ou Censys — légalement, seulement des systèmes que vous
+possédez ou êtes autorisé à tester — et observez à quoi ressemble vraiment « exposé ».
+
+375
+00:50:04,428 --> 00:50:14,380
+Quatre : lisez un rapport de fuite de bout en bout — Capital One, Equifax
+ou MOVEit ; les vraies fuites sont les meilleurs manuels qui soient.
+
+376
+00:50:14,380 --> 00:50:20,057
+Cinq : découvrez quelles bases de données
+votre propre organisation fait tourner.
+
+377
+00:50:20,057 --> 00:50:23,842
+La plupart des analystes SOC
+ne savent pas y répondre.
+
+378
+00:50:23,842 --> 00:50:31,201
+Passez une après-midi à faire la vraie liste, et vous
+êtes aussitôt plus utile que la moitié de l'équipe.
+
+379
+00:50:32,301 --> 00:50:34,338
+Cinq favoris à emporter.
+
+380
+00:50:34,338 --> 00:50:52,157
+PortSwigger Web Security Academy — portswigger.net/web-security — la meilleure rampe d'accès gratuite à la
+sécurité des applications web qui existe, et là où vous vous ferez les dents sur de la vraie injection.
+
+381
+00:50:52,157 --> 00:51:02,509
+SQLBolt — sqlbolt.com — apprenez SQL de façon interactive, dans
+votre navigateur, de manière ludique, sans rien installer.
+
+382
+00:51:02,509 --> 00:51:16,085
+Use The Index, Luke — use-the-index-luke.com — quand vous serez prêts pour la
+magie profonde du fonctionnement réel des index et de la performance des requêtes.
+
+383
+00:51:16,085 --> 00:51:31,189
+DB-Engines Ranking — db-engines.com — le classement de popularité en temps réel de quasiment
+toute base de données existante, génial pour voir ce qui vaut la peine d'être appris.
+
+384
+00:51:31,189 --> 00:51:45,105
+Et l'OWASP Top 10 — owasp.org/Top10 — la liste canonique des vulnérabilités web,
+dont les classes d'injection et de mauvaise configuration qu'on a vues aujourd'hui.
+
+385
+00:51:45,105 --> 00:51:54,269
+Mettez ces cinq en favoris et vous avez des mois
+d'apprentissage autodirigé en file d'attente, gratuitement.
+
+386
+00:51:55,369 --> 00:51:56,978
+Je vous laisse là-dessus.
+
+387
+00:51:56,978 --> 00:52:01,678
+Il y a une vieille phrase attribuée
+au braqueur de banques Willie Sutton.
+
+388
+00:52:01,678 --> 00:52:08,889
+Quand on lui a demandé pourquoi il braquait les banques,
+il aurait répondu : parce que c'est là qu'est l'argent.
+
+389
+00:52:08,889 --> 00:52:11,980
+En 2026, l'argent est dans
+les bases de données.
+
+390
+00:52:11,980 --> 00:52:24,792
+Dossiers clients, dossiers financiers, dossiers de santé, propriété intellectuelle, poids de modèles,
+embeddings vectoriels, code source, secrets — tout ça vit dans une base de données, quelque part.
+
+391
+00:52:24,792 --> 00:52:31,745
+Les attaquants le savent déjà ; c'est pour ça que chaque
+histoire de fuite se termine là où elle se termine.
+
+392
+00:52:31,745 --> 00:52:44,493
+La seule chose qui a changé dans la dernière heure, c'est que maintenant vous le savez aussi — et,
+plus important, vous avez la carte pour le trouver, le nommer, et raisonner sur sa façon d'échouer.
+
+393
+00:52:44,493 --> 00:52:49,322
+Vous n'avez pas besoin d'un diplôme
+d'informatique pour être dangereux ici.
+
+394
+00:52:49,322 --> 00:52:50,932
+Il vous fallait la carte.
+
+395
+00:52:50,932 --> 00:52:51,704
+Vous l'avez.
+
+396
+00:52:51,704 --> 00:52:53,893
+Maintenant vous savez où regarder.
+
+397
+00:52:54,993 --> 00:52:57,083
+On y est presque — les justificatifs.
+
+398
+00:52:57,083 --> 00:53:25,775
+Tout ce que je vous ai raconté aujourd'hui repose sur les épaules de gens qui l'ont écrit comme il faut, et cette diapositive liste les livres sur lesquels je me suis appuyé — Learning SQL de Beaulieu, SQL Injection Attacks and Defense de Clarke, Secrets
+and Lies de Schneier, Threat Modeling de Shostack, le Web Application Hacker's Handbook, Cybersecurity Attack and Defense Strategies, Alice and Bob Learn Application Security de Tanya Janca, et l'OWASP Top 10 — l'édition actuelle de 2025 — entre autres.
+
+399
+00:53:25,775 --> 00:53:35,941
+Vous n'avez pas à tous les lire — mais si une seule catégorie d'aujourd'hui vous a allumés,
+il y a un livre entier sur cette diapositive qui n'attend que de vous emmener plus loin.
+
+400
+00:53:35,941 --> 00:53:38,652
+Prenez-la en photo avant
+qu'elle ne disparaisse.
+
+401
+00:53:38,652 --> 00:53:45,034
+Ce sont les épaules sur lesquelles repose toute la
+présentation — et avec elles à l'écran, ouvrons la discussion.
+
+402
+00:53:46,134 --> 00:53:53,763
+Et voilà la présentation — merci d'être restés avec
+moi pendant les quarante-cinq minutes entières.
+
+403
+00:53:53,763 --> 00:54:11,180
+Cette dernière diapositive, c'est là qu'on ouvre, donc c'est votre moment : balancez-moi vos questions, vos histoires
+de guerre, le truc de votre propre environnement qui vous trottait dans la tête tout le temps où je parlais.
+
+404
+00:54:11,180 --> 00:54:31,679
+Aucune question n'est trop basique ici — rappelez-vous que toute la prémisse de cette présentation, c'est que personne ne naît en
+sachant tout ça, et que ceux qui posent les questions « évidentes » sont souvent ceux qui parlent en silence pour la moitié de la salle.
+
+405
+00:54:31,679 --> 00:54:34,376
+Ne me fixez pas tous en même temps.
+
+406
+00:54:34,376 --> 00:54:47,785
+Si on manque de temps ou que votre question demande un tableau blanc, attrapez-moi après
+ou écrivez-moi — je suis sur github.com/CryptoJones, ou CryptoJones@infosec.exchange.
+
+407
+00:54:47,785 --> 00:54:54,105
+Pendant que les premières mains se lèvent
+: qu'est-ce qui vous a le plus surpris ?
+
+408
+00:54:54,105 --> 00:55:01,118
+Pour beaucoup, c'est que les notes en markdown
+sont maintenant une base de données vivante.
+
+409
+00:55:01,118 --> 00:55:02,428
+Alors — balancez.
+
+410
+00:55:02,428 --> 00:55:10,519
+Et dès qu'on aura terminé ici : allez découvrir quelles
+bases de données votre organisation fait tourner.
+
+411
+00:55:10,519 --> 00:55:11,521
+Sérieusement.
+
+412
+00:55:11,521 --> 00:55:12,138
+Allez-y.
+
+413
+00:55:12,138 --> 00:55:19,767
+Environ 45 minutes de script sur 45 diapositives,
+se terminant par des questions-réponses ouvertes.
+
+414
+00:55:19,767 --> 00:55:23,929
+Une présentation indépendante
+de CryptoJones (Aaron K.
+
+415
+00:55:23,929 --> 00:55:24,468
+Clark).
+
