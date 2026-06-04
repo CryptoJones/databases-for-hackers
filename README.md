@@ -37,4 +37,4 @@ deck and script ship as standalone deliverables.
 
 ## License
 
-[MIT](LICENSE) © 2026 Aaron K. Clark
+[MIT](LICENSE) © 2026 aaron.clark@milcyber.org
