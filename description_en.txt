@@ -1,0 +1,21 @@
+Databases for Hackers — A Ronin 48 Stand-Up Talk
+
+Every breach you've ever read about ends at a database. This 45-minute talk is for people coming into security without a computer-science background: entry-level SOC analysts, junior pentesters, and GRC folks moving into technical work. No CS degree required.
+
+We walk through how databases actually work and how they get attacked and defended — SQL and NoSQL injection, cloud misconfigurations, the shared responsibility model, and the security questions around RAG / vector databases.
+
+Speaker: Aaron K. Clark
+
+Video (MP4):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides.mp4
+
+Slide deck (PowerPoint):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides.pptx
+
+Slide deck (PDF):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides.pdf
+
+Captions / subtitles (SRT, English):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_en.srt
+
+Full project and source: https://codeberg.org/CryptoJones/databases-for-hackers

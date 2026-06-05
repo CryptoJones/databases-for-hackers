@@ -1,0 +1,21 @@
+Базы данных для хакеров — доклад Ronin 48
+
+Любая утечка данных, о которой вы когда-либо читали, заканчивается в базе данных. Этот 45-минутный доклад предназначен для тех, кто приходит в информационную безопасность без образования в области информатики: начинающих аналитиков SOC, младших пентестеров и специалистов GRC, переходящих в техническую сферу. Диплом по информатике не требуется.
+
+Мы разберём, как на самом деле работают базы данных и как их атакуют и защищают: SQL- и NoSQL-инъекции, неправильные настройки в облаке, модель разделённой ответственности и вопросы безопасности векторных баз данных / RAG.
+
+Докладчик: Aaron K. Clark
+
+Видео (MP4):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_ru.mp4
+
+Слайды (PowerPoint):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_ru.pptx
+
+Слайды (PDF):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_ru.pdf
+
+Субтитры (SRT, русский):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_ru.srt
+
+Полный проект и исходный код: https://codeberg.org/CryptoJones/databases-for-hackers

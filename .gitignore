@@ -5,3 +5,10 @@ book_quotes.json
 # Python
 __pycache__/
 *.pyc
+
+# Local-only video-description tooling (not for publishing)
+update_youtube_descriptions.py
+
+# OAuth secrets — never commit
+client_secret.json
+token.json

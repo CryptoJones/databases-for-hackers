@@ -1,0 +1,21 @@
+해커를 위한 데이터베이스 — Ronin 48 강연
+
+당신이 읽어본 모든 침해 사고는 결국 데이터베이스에서 끝납니다. 이 45분짜리 강연은 컴퓨터 과학 배경 없이 보안 분야에 들어오는 사람들을 위한 것입니다: 입문 단계의 SOC 분석가, 주니어 모의해커, 그리고 기술 직무로 전환하는 GRC 담당자. 컴퓨터 과학 학위는 필요 없습니다.
+
+데이터베이스가 실제로 어떻게 작동하는지, 그리고 어떻게 공격받고 방어되는지 살펴봅니다: SQL 및 NoSQL 인젝션, 클라우드 설정 오류, 공동 책임 모델, 그리고 벡터 데이터베이스 / RAG를 둘러싼 보안 문제.
+
+발표자: Aaron K. Clark
+
+동영상 (MP4):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_ko.mp4
+
+슬라이드 (PowerPoint):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_ko.pptx
+
+슬라이드 (PDF):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_ko.pdf
+
+자막 (SRT, 한국어):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_ko.srt
+
+전체 프로젝트 및 소스 코드: https://codeberg.org/CryptoJones/databases-for-hackers

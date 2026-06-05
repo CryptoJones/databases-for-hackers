@@ -1,0 +1,21 @@
+Datenbanken für Hacker — Ein Ronin-48-Vortrag
+
+Jeder Sicherheitsvorfall, von dem du je gelesen hast, endet bei einer Datenbank. Dieser 45-minütige Vortrag richtet sich an Menschen, die ohne Informatik-Hintergrund in die Security einsteigen: SOC-Analysten am Anfang ihrer Laufbahn, Junior-Pentester und GRC-Fachleute auf dem Weg ins Technische. Kein Informatikstudium erforderlich.
+
+Wir gehen durch, wie Datenbanken wirklich funktionieren und wie sie angegriffen und verteidigt werden: SQL- und NoSQL-Injection, Fehlkonfigurationen in der Cloud, das Modell der geteilten Verantwortung und die Sicherheitsfragen rund um Vektordatenbanken / RAG.
+
+Referent: Aaron K. Clark
+
+Video (MP4):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_de.mp4
+
+Foliensatz (PowerPoint):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_de.pptx
+
+Foliensatz (PDF):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_de.pdf
+
+Untertitel (SRT, Deutsch):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_de.srt
+
+Vollständiges Projekt und Quellcode: https://codeberg.org/CryptoJones/databases-for-hackers

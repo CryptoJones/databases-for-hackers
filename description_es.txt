@@ -1,0 +1,21 @@
+Bases de datos para hackers — Una charla de Ronin 48
+
+Cada brecha de seguridad de la que has oído hablar termina en una base de datos. Esta charla de 45 minutos está dirigida a personas que entran en el mundo de la seguridad sin formación en informática: analistas SOC de nivel inicial, pentesters junior y profesionales de GRC que dan el salto a lo técnico. No se necesita un título en informática.
+
+Recorremos cómo funcionan realmente las bases de datos y cómo se atacan y se defienden: inyección SQL y NoSQL, configuraciones incorrectas en la nube, el modelo de responsabilidad compartida y las cuestiones de seguridad en torno a las bases de datos vectoriales / RAG.
+
+Ponente: Aaron K. Clark
+
+Vídeo (MP4):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_es.mp4
+
+Presentación (PowerPoint):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_es.pptx
+
+Presentación (PDF):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_es.pdf
+
+Subtítulos (SRT, español):
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_es.srt
+
+Proyecto completo y código fuente: https://codeberg.org/CryptoJones/databases-for-hackers

@@ -1,0 +1,21 @@
+黑客眼中的数据库 —— Ronin 48 讲座
+
+你读到过的每一起数据泄露，最终都指向一个数据库。这场 45 分钟的讲座面向没有计算机科学背景却想进入安全领域的人：初级 SOC 分析师、初级渗透测试人员，以及正在转向技术岗位的 GRC 从业者。无需计算机学位。
+
+我们会讲清楚数据库到底是如何工作的，以及它们是如何被攻击和防御的：SQL 与 NoSQL 注入、云端配置错误、责任共担模型，以及围绕向量数据库 / RAG 的安全问题。
+
+主讲人：Aaron K. Clark
+
+视频（MP4）：
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_zh.mp4
+
+幻灯片（PowerPoint）：
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_zh.pptx
+
+幻灯片（PDF）：
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_zh.pdf
+
+字幕（SRT，中文）：
+https://codeberg.org/CryptoJones/databases-for-hackers/src/branch/main/slides_zh.srt
+
+完整项目与源代码：https://codeberg.org/CryptoJones/databases-for-hackers
