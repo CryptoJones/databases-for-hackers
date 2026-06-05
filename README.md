@@ -38,3 +38,5 @@ deck and script ship as standalone deliverables.
 ## License
 
 [MIT](LICENSE) © 2026 aaron.clark@milcyber.org
+
+Proudly Made in Nebraska. Go Big Red! 🌽 https://xkcd.com/2347/

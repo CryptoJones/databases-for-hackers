@@ -133,3 +133,5 @@ This repository is mirrored on both **GitHub** and **Codeberg** under
 ## License
 
 [MIT](LICENSE) © 2026 aaron.clark@milcyber.org
+
+Proudly Made in Nebraska. Go Big Red! 🌽 https://xkcd.com/2347/
