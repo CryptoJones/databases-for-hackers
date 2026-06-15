@@ -23,7 +23,7 @@ Here is the only sentence you have to remember from the next forty-five minutes.
 
 Every breach you have ever read about ends at a database.
 
-Equifax in 2017 — one hundred and forty-seven million people's personal records — that data lived in a database. Capital One in 2019 — a hundred million credit applications — database. MOVEit in 2023 — the file-transfer software that turned into a supply-chain catastrophe across what felt like the entire Fortune 500 — every one of those organizations was bleeding data from a database. SolarWinds, T-Mobile, LinkedIn, the OPM breach, the Marriott breach. I could keep going for the whole forty-five minutes. The names change, the headlines change, the press releases change. The destination is always the same.
+Equifax in 2017 — one hundred and forty-seven million people's personal records — that data lived in a database. Capital One in 2019 — a hundred million credit applications — database. MOVEit in 2023 — the file-transfer software that turned into a supply-chain catastrophe across what felt like the entire Fortune 500 — every one of those organizations was bleeding data from a database. T-Mobile, LinkedIn, the OPM breach, the Marriott breach — and SolarWinds too, though that one's the outlier: a software supply-chain compromise more than a straight database heist. I could keep going for the whole forty-five minutes. The names change, the headlines change, the press releases change. The destination is always the same.
 
 [SLIDE 4 — Stylized image: a vault with rows of filing cabinets behind it]
 
@@ -133,7 +133,7 @@ There are ten families of database you will run into in the wild. I'm going to g
 
 [SLIDE 12 — **4. Column-family stores**]
 
-**Number four — column-family**, sometimes called wide-column. Designed for massive scale across many machines. Products — **Apache Cassandra, HBase, ScyllaDB**. Use it when you have so much data that one machine can't hold it and you don't need complex joins. Netflix, Apple, and Instagram run on Cassandra. Security gotcha — clusters often trust each other implicitly on the gossip protocol port; getting on the management network is sometimes equivalent to root.
+**Number four — column-family**, sometimes called wide-column. Designed for massive scale across many machines. Products — **Apache Cassandra, HBase, ScyllaDB**. Use it when you have so much data that one machine can't hold it and you don't need complex joins. Netflix, Apple, and Uber run on Cassandra. Security gotcha — clusters often trust each other implicitly on the gossip protocol port; getting on the management network is sometimes equivalent to root.
 
 [SLIDE 13 — **5. Graph databases**]
 
@@ -153,7 +153,7 @@ There are ten families of database you will run into in the wild. I'm going to g
 
 [SLIDE 17 — **9. Embedded / Edge**]
 
-**Number nine — embedded and edge databases.** The database lives **inside the application**, in a file, not on a server. Products — **SQLite, DuckDB, LevelDB**. SQLite is the most-deployed database on Earth. It's in your browser, your phone, every airplane that's been built in the last twenty years. Security gotcha — when the database is just a file, the attack is *steal the file*. Mobile pentesters live in this world.
+**Number nine — embedded and edge databases.** The database lives **inside the application**, in a file, not on a server. Products — **SQLite, DuckDB, LevelDB**. SQLite is the most-deployed database on Earth. It's in your browser, your phone, and even in aircraft avionics — Airbus confirms it's in the flight software of the A350. Security gotcha — when the database is just a file, the attack is *steal the file*. Mobile pentesters live in this world.
 
 [SLIDE 18 — **10. Data Lakes / Lakehouses**]
 
@@ -234,7 +234,7 @@ This is called **RAG data poisoning**. We'll come back to it in the security sec
 
 [SLIDE 25 — Bullet: "Treat markdown like a database. Because to the LLM, it is."]
 
-Treat markdown like a database. Because to the LLM, it is. Schwartz put it well in *Secrets and Lies* — *"the goal was to prevent attacks: through cryptography, access control, firewalls, antivirus, and all sorts of other technologies."* — *Secrets and Lies*, p.9. Access control over markdown files is now part of that toolkit. Welcome to 2026.
+Treat markdown like a database. Because to the LLM, it is. Schneier put it well in *Secrets and Lies* — *"the goal was to prevent attacks: through cryptography, access control, firewalls, antivirus, and all sorts of other technologies."* — *Secrets and Lies*, p.9. Access control over markdown files is now part of that toolkit. Welcome to 2026.
 
 [TRANSITION — long pause, drink water, change tone. "Now — the part you came for."]
 
@@ -274,7 +274,7 @@ When the industry moved to NoSQL — MongoDB, Couchbase, Elasticsearch — a lot
 
 In MongoDB, queries are JSON. If you take JSON from a web form and shove it directly into a query, an attacker can replace a string with a **query operator**. The classic — your login is checking `{"username": "alice", "password": "hunter2"}`. The attacker submits `{"username": "alice", "password": {"$ne": "x"}}` — *not equal to x*. The query becomes "find the user named alice whose password is not equal to x" — and since alice's password is not equal to x, that returns alice. Boom. Logged in.
 
-There's also `$where`, which historically let you inject JavaScript directly into the database. And **N1QL** in Couchbase is essentially a SQL-flavored query language for documents, which means classic SQL injection patterns *do* apply there. The OWASP Top 10 — in the 2017 edition, which is still the document people quote — captures the general principle: *"Dynamic queries or non-parameterized calls without context-aware escaping are used directly in the interpreter."* — *OWASP Top 10 2017*, p.8. Doesn't say SQL. Says *interpreter*. That's any query engine. The principle is universal.
+There's also `$where`, which historically let you inject JavaScript directly into the database. And **N1QL** in Couchbase is essentially a SQL-flavored query language for documents, which means classic SQL injection patterns *do* apply there. The OWASP Top 10 — in the current 2025 edition — captures the general principle: *"Dynamic queries or non-parameterized calls without context-aware escaping are used directly in the interpreter."* — *OWASP Top 10:2025*, A05:2025 Injection. Doesn't say SQL. Says *interpreter*. That's any query engine. The principle is universal.
 
 ### 7.3 — Exposed and Misconfigured Databases
 
@@ -359,7 +359,7 @@ Tanya Janca in *Alice and Bob Learn Application Security*, p.88, emphasizes the 
 
 [SLIDE 36 — Header: "Supply chain — the database libraries you trust"]
 
-You don't write your database driver from scratch. You install it from npm, PyPI, Maven, NuGet, or somewhere similar. So does every developer in your org. So when an attacker compromises a popular library, they're a `pip install` away from execution on your database client.
+You don't write your database driver from scratch. You install it from npm, PyPI, Maven, NuGet, or somewhere similar. So does every developer in your org. So when an attacker compromises a popular library, they're a `pip install` away from execution on your database client. OWASP saw the same shift: in the 2025 Top 10 they promoted software supply chain failures to a category all its own — A03, right up near the top of the list.
 
 Three real-world patterns:
 
@@ -383,7 +383,7 @@ Examples:
 - A poisoned section of internal docs that says "the company's policy is to wire transfer requests to the following account…"
 - **Prompt injection through stored data** — instructions embedded in a document that hijack the LLM's reasoning when retrieved.
 
-This is **stored XSS for the AI era.** The data is at rest, it looks innocuous, it gets activated when consumed. OWASP's stored-XSS principle from the 2017 Top 10 applies — *"Stored XSS: The application or API stores unsanitized user input that is viewed at a later time by another user or an administrator."* — *OWASP Top 10 2017*, p.14. Substitute "an administrator" with "an LLM" and you have the modern version.
+This is **stored XSS for the AI era.** The data is at rest, it looks innocuous, it gets activated when consumed. And the timing is tidy: in the 2025 Top 10, OWASP folded cross-site scripting straight into the injection category — *"Injection includes Cross-site Scripting (high frequency/low impact) with more than 30k CVEs."* — *OWASP Top 10:2025*, A05:2025 Injection. The old stored-XSS mechanic still holds — untrusted input stored now, viewed later by another user. Swap "viewed later by another user" for "retrieved later by an LLM" and you have the modern version.
 
 Defenses are still being figured out, but the basics are — **strict access control on writes**, **provenance tagging on retrieved chunks**, and **never let the LLM act on instructions found in retrieved content** without a human in the loop.
 
@@ -476,7 +476,7 @@ Books cited throughout this talk:
 - Mishra, Manpreet Singh and Bikash Chandra Singh. *PostgreSQL Development Essentials.* Packt.
 - *MongoDB Cookbook.* Packt.
 - *10gen — Top 5 NoSQL Considerations.* 10gen / MongoDB Inc.
-- OWASP. *OWASP Top 10 — 2017 Edition.*
+- OWASP. *OWASP Top 10:2025.* https://owasp.org/Top10/2025/ (Injection category: https://owasp.org/Top10/2025/A05_2025-Injection/)
 - Sharma, Manish. *Cosmos DB for MongoDB Developers.* Apress, 2018.
 - Schneier, Bruce. *Secrets and Lies — Digital Security in a Networked World.* Wiley.
 - Anderson, Ross. *Security Engineering, Second Edition.* Wiley.

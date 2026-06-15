@@ -514,7 +514,7 @@ HBase, ScyllaDB.
 110
 00:09:59,482 --> 00:10:10,483
 Use it when you have so much data that no single machine can hold it and you don't
-need complex joins — think Netflix, Apple, and Instagram, all running on Cassandra.
+need complex joins — think Netflix, Apple, and Uber, all running on Cassandra.
 
 111
 00:10:10,483 --> 00:10:17,243
@@ -687,7 +687,7 @@ Products: SQLite, DuckDB, LevelDB.
 146
 00:14:36,875 --> 00:14:48,158
 SQLite alone is the most widely deployed database on Earth: it's in your browser,
-your phone, your car, and basically every airplane built in the last twenty years.
+your phone, your car, and even in aircraft avionics — Airbus confirms it's in the A350's flight software.
 
 147
 00:14:48,158 --> 00:14:53,524
